@@ -1,0 +1,27 @@
+<div class="signin-page">
+  <mat-card class="signin-card">
+    <mat-card-header>
+      <mat-card-title>Inscription</mat-card-title>
+      <mat-card-subtitle>Créez votre compte watchlist</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form class="signin-form" (ngSubmit)="signin()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput [(ngModel)]="email" name="email" type="email" placeholder="Ex. pat@example.com" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Mot de passe</mat-label>
+          <input matInput [(ngModel)]="mdp" name="mdp" type="password" required>
+        </mat-form-field>
+
+        <div class="actions">
+          <button mat-raised-button color="primary" type="submit">S'inscrire</button>
+          <button mat-button type="button" routerLink="/login">Vous avez déjà un compte ?</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

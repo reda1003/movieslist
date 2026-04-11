@@ -1,0 +1,67 @@
+<!-- 1. En-tête : Créer un Mat-Toolbar avec le titre de votre app -->
+<mat-toolbar color="primary"> 
+  <span>WATCHED OR NOT</span>
+</mat-toolbar>
+
+<div class="movies-container">
+  <!-- 2. Formulaire d'Ajout : Créer un Mat-Card pour l'ajout d'un film -->
+  <mat-card class="add-movie-card">
+    <mat-card-header>
+      <mat-card-title>Ajouter un film</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form (ngSubmit)="addMovie()" class="add-movie-form">
+        <mat-form-field appearance="fill">
+          <mat-label>Titre</mat-label>
+          <input matInput [(ngModel)]="newMovieTitle" name="title" required>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Description</mat-label>
+          <input matInput [(ngModel)]="newMovieDescription" name="description" required>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>URL de l'image (optionnel)</mat-label>
+          <input matInput [(ngModel)]="newMovieImageUrl" name="imageUrl">
+        </mat-form-field>
+        <button mat-raised-button color="primary" type="submit" [disabled]="!newMovieTitle.trim() || !newMovieDescription.trim()">Ajouter</button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="movie-list-section">
+    <h2>Ma Watchlist</h2>
+    <!-- 3. Liste de Films : Utiliser *ngIf avec le pipe 'async' pour movies$ -->
+    <div class="movie-grid" *ngIf="movies$ | async as movies; else loading">
+      
+      <!-- 5. État vide : Afficher un message si movies.length === 0 -->
+      <div class="empty-state" *ngIf="movies.length === 0">
+        <p>Votre watchlist est vide. Ajoutez des films !</p>
+      </div>
+
+      <!-- 4. Chaque Carte Film : Utiliser *ngFor="let movie of movies" -->
+      <mat-card class="movie-card" *ngFor="let movie of movies">
+        <img mat-card-image [src]="movie.imageUrl || 'https://via.placeholder.com/300x450?text=Pas+d+image'" alt="Poster du film">
+        <mat-card-content>
+          <h3 [class.watched]="movie.watched">{{ movie.title }}</h3>
+          <p>{{ movie.description }}</p>
+        </mat-card-content>
+        <mat-card-actions class="movie-actions">
+          <button mat-icon-button (click)="toggleWatched(movie)">
+            <mat-icon>{{ movie.watched ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteMovie(movie.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+    </div>
+
+    <!-- 6. État de chargement : Créer un template <ng-template #loading> -->
+    <ng-template #loading>
+      <div class="loading-state">
+        <p>Chargement de la watchlist...</p>
+      </div>
+    </ng-template>
+  </div>
+</div>
