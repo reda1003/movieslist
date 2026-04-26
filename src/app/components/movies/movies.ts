@@ -41,7 +41,7 @@ export class Movies {
     // 1. Vérifier si titre et description ne sont pas vides (trim())
     if (this.newMovieTitle.trim() && this.newMovieDescription.trim()) {
       // 2. Appeler addMovie(...) du service avec les variables du formulaire
-      this.movieService.addMovie(this.newMovieTitle,this.newMovieDescription,this.newMovieImageUrl)
+      this.movieService.addMovie(this.newMovieTitle, this.newMovieDescription, this.newMovieImageUrl)
         .then(() => {
           // 3. Une fois ajouté (.then), vider les champs du formulaire
           this.newMovieTitle = "";
@@ -51,8 +51,25 @@ export class Movies {
     }
   }
 
-  deleteMovie(id: string) {
-    if(id){
+  // Champs pour gérer l'affichage de la modification dans l'interface (HTML)
+  editingMovieId: string | null = null;
+  editTitle = "";
+  editDescription = "";
+  editImageUrl = "";
+
+  updateMovie(movie: Movie) {
+    if (movie.id) {
+      this.movieService.updateMovie(movie.id, { 
+        title: this.editTitle, 
+        description: this.editDescription, 
+        imageUrl: this.editImageUrl 
+      });
+      this.editingMovieId = null; // Fermer le mode édition
+    }
+  }
+
+  deleteMovie(id?: string) {
+    if (id) {
       this.movieService.deletemovie(id)
     }
     // 2. Appeler deletemovie(id) du service
@@ -61,8 +78,8 @@ export class Movies {
   toggleWatched(movie: Movie) {
     // 1. Vérifier si movie.id existe
     // 2. Appeler updateMovieStatus(id, !movie.watched) du service
-    if(movie.id){
-      this.movieService.updateMovieStatus(movie.id,!movie.watched)
+    if (movie.id) {
+      this.movieService.updateMovie(movie.id, { watched: !movie.watched })
     }
   }
 }

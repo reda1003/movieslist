@@ -1,5 +1,5 @@
 <!-- 1. En-tête : Créer un Mat-Toolbar avec le titre de votre app -->
-<mat-toolbar color="primary"> 
+<mat-toolbar color="primary">
   <span>WATCHED OR NOT</span>
 </mat-toolbar>
 
@@ -23,7 +23,8 @@
           <mat-label>URL de l'image (optionnel)</mat-label>
           <input matInput [(ngModel)]="newMovieImageUrl" name="imageUrl">
         </mat-form-field>
-        <button mat-raised-button color="primary" type="submit" [disabled]="!newMovieTitle.trim() || !newMovieDescription.trim()">Ajouter</button>
+        <button mat-raised-button color="primary" type="submit"
+          [disabled]="!newMovieTitle.trim() || !newMovieDescription.trim()">Ajouter</button>
       </form>
     </mat-card-content>
   </mat-card>
@@ -32,7 +33,7 @@
     <h2>Ma Watchlist</h2>
     <!-- 3. Liste de Films : Utiliser *ngIf avec le pipe 'async' pour movies$ -->
     <div class="movie-grid" *ngIf="movies$ | async as movies; else loading">
-      
+
       <!-- 5. État vide : Afficher un message si movies.length === 0 -->
       <div class="empty-state" *ngIf="movies.length === 0">
         <p>Votre watchlist est vide. Ajoutez des films !</p>
@@ -40,19 +41,51 @@
 
       <!-- 4. Chaque Carte Film : Utiliser *ngFor="let movie of movies" -->
       <mat-card class="movie-card" *ngFor="let movie of movies">
-        <img mat-card-image [src]="movie.imageUrl || 'https://via.placeholder.com/300x450?text=Pas+d+image'" alt="Poster du film">
-        <mat-card-content>
-          <h3 [class.watched]="movie.watched">{{ movie.title }}</h3>
-          <p>{{ movie.description }}</p>
-        </mat-card-content>
-        <mat-card-actions class="movie-actions">
-          <button mat-icon-button (click)="toggleWatched(movie)">
-            <mat-icon>{{ movie.watched ? 'visibility_off' : 'visibility' }}</mat-icon>
-          </button>
-          <button mat-icon-button color="warn" (click)="deleteMovie(movie.id)">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </mat-card-actions>
+        
+        <!-- SI ON N'EST PAS EN MODE ÉDITION POUR CE FILM -->
+        <ng-container *ngIf="editingMovieId !== movie.id">
+          <img mat-card-image [src]="movie.imageUrl || 'https://via.placeholder.com/300x450?text=Pas+d+image'" alt="Poster du film">
+          <mat-card-content>
+            <h3 [class.watched]="movie.watched">{{ movie.title }}</h3>
+            <p>{{ movie.description }}</p>
+          </mat-card-content>
+          <mat-card-actions class="movie-actions">
+            <!-- Bouton Editer : on active le mode édition -->
+            <button mat-icon-button color="primary" (click)="editingMovieId = movie.id!; editTitle = movie.title; editDescription = movie.description; editImageUrl = movie.imageUrl || ''">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="toggleWatched(movie)">
+              <mat-icon>{{ movie.watched ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteMovie(movie.id)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-card-actions>
+        </ng-container>
+
+        <!-- SI ON EST EN MODE ÉDITION POUR CE FILM -->
+        <ng-container *ngIf="editingMovieId === movie.id">
+          <mat-card-content style="padding-top: 16px;">
+            <mat-form-field appearance="fill" style="width: 100%;">
+              <mat-label>Titre</mat-label>
+              <input matInput [(ngModel)]="editTitle">
+            </mat-form-field>
+            <mat-form-field appearance="fill" style="width: 100%;">
+              <mat-label>Description</mat-label>
+              <textarea matInput [(ngModel)]="editDescription"></textarea>
+            </mat-form-field>
+            <mat-form-field appearance="fill" style="width: 100%;">
+              <mat-label>URL Image</mat-label>
+              <input matInput [(ngModel)]="editImageUrl">
+            </mat-form-field>
+          </mat-card-content>
+          <mat-card-actions style="justify-content: flex-end;">
+            <!-- On appelle l'unique fonction updateMovie() -->
+            <button mat-button color="primary" (click)="updateMovie(movie)">Enregistrer</button>
+            <button mat-button color="warn" (click)="editingMovieId = null">Annuler</button>
+          </mat-card-actions>
+        </ng-container>
+
       </mat-card>
 
     </div>

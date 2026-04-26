@@ -141,9 +141,9 @@ export class MoviesComponentInstructions {
 
   toggleWatched(movie: any /* Movie */) {
     // 1. Vérifier si movie.id existe
-    // 2. Appeler this.movieService.updateMovieStatus(movie.id, !movie.watched) en inversant le statut
+    // 2. Appeler this.movieService.updateMovie(movie.id, { watched: !movie.watched }) en inversant le statut
     if(movie.id){
-      this.movieService.updateMovieStatus(movie.id,!movie.watched)
-}
-}
+      this.movieService.updateMovie(movie.id, { watched: !movie.watched })
+    }
+  }
 }
